@@ -1,0 +1,21 @@
+{
+  "name": "plagiarism-checker-lib",
+  "version": "1.0.0",
+  "description": "A library for checking plagiarism in text documents.",
+  "main": "index.ts",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MaxwellGarceau/plagiarism-checker-lib.git"
+  },
+  "keywords": [
+    "plagiarism",
+    "nlp",
+    "machine-learning"
+  ],
+  "author": "Max Garceau",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/MaxwellGarceau/plagiarism-checker-lib/issues"
+  },
+  "homepage": "https://github.com/MaxwellGarceau/plagiarism-checker-lib#readme"
+}
