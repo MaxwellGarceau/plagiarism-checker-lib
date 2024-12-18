@@ -1,6 +1,7 @@
 import nlp from 'compromise'
 import { appLogger } from './config/log4js';
 import PipelineOutput from './interfaces/PipelineOutput';
+
 /**
  * Process the text by tokenizing, removing stop words, cleaning tokens, and lemmatizing
  * 
@@ -95,7 +96,17 @@ function cleanTokens(tokens: string[]): string[] {
  */
 function lemmatizeTokens(tokens: string[]): string[] {
 	return tokens
-		.map(word => nlp(word).verbs().toInfinitive().out('text') || word);
+		.map(word =>
+			nlp(word)
+				.verbs()
+				.toInfinitive()
+				.out('text') ||
+			nlp(word)
+				.nouns()
+				.toSingular()
+				.out('text') ||
+			word
+		);
 }
 
 export default process;
