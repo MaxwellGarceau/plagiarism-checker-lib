@@ -1,4 +1,4 @@
-# Testing instructions explanation
+# Testing explanation
 
 Checking plagiarism using "Stairway to Heaven" as the original song.
 - `original-text.txt` is the complete set of lyrics from "Stairway to Heaven".
