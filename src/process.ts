@@ -93,20 +93,15 @@ function cleanTokens(tokens: string[]): string[] {
 
 /**
  * Lemmatize the tokens to their base form
+ * 
+ * Using the `compute` method to get the root of the word
+ * 
+ * TODO: Using nlp twice in order to format the output as an array
+ * There's probably a better way to do this.
  */
 function lemmatizeTokens(tokens: string[]): string[] {
-	return tokens
-		.map(word =>
-			nlp(word)
-				.verbs()
-				.toInfinitive()
-				.out('text') ||
-			nlp(word)
-				.nouns()
-				.toSingular()
-				.out('text') ||
-			word
-		);
+	const doc = nlp(tokens.join(' '));
+	return nlp(doc.compute('root').text('root')).out('array');
 }
 
 export default process;
