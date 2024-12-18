@@ -1,42 +1,32 @@
-import winkNLP, { Detail, ItemToken, Bow } from 'wink-nlp';
-import model from 'wink-eng-lite-web-model';
+import nlp from 'compromise'
+import { appLogger } from './config/log4js';
 
-const nlp = winkNLP(model);
-const { its, as } = nlp;
+// Example function to process a text document
+function process(text: string) {
 
-// TODO: Replace with another library that supports lemmatization
-function process(text: string): Bow | string[] | null {
-	// Early return for empty text
-	if (!text || text.trim().length === 0) {
-		return null;
-	}
+	appLogger.info('Original text:', text);
 
-	// Step 1: Tokenize the text
-	const doc = nlp.readDoc(text);
-	let tokens = doc.tokens();
+    // Tokenize the text using compromise
+    let doc = nlp(text);
 
-	// Step 2: Remove stop words (common words like 'the', 'is', 'at', etc.)
-	tokens = tokens.filter((token: ItemToken) => !token.out(its.stopWordFlag));
+    // Remove stop words
+    let noStopWords = doc
+        .match('(#Noun|#Verb|#Adjective|#Adverb)') // Match meaningful parts of speech
+        .terms()
+        .out('array');
 
-	// Step 3: Remove punctuation tokens
-	tokens = tokens.filter(token => token.out(its.pos) !== 'PUNCT');
+	appLogger.info('noStopWords:', noStopWords);
 
-	// Step 4: Lemmatize tokens (convert words to their base form)
-	// Example: 'running' -> 'run', 'better' -> 'good'
-	// const lemmatizedTokens = tokens.each((token: ItemToken) => token.out(its.lemma));
-	// const lemmatizedTokens = tokens.map((token: ItemToken) => token.out(its.lemma));
+    // Remove punctuation and lemmatize
+    let processedWords = noStopWords.map((word: string) => {
+        let cleanWord = word.replace(/[^\w\s]|_/g, "").toLowerCase(); // Remove punctuation and make lowercase
+        let lemma = nlp(cleanWord).verbs().toInfinitive().out('text') || cleanWord; // Lemmatize
+        return lemma;
+    }).filter((word: string) => word !== ''); // Filter out empty strings
 
-	// // Step 5: Join the processed tokens back into a string
-	// // Filter out any empty strings that might have been created during processing
-	// const processedText = lemmatizedTokens
-	// 	.filter(token => token && token.trim().length > 0)
-	// 	.join(' ');
+	appLogger.info('No punctuation and all words lemmatized:', processedWords);
 
-	const processedText = tokens.out(its.value, as.bow);
-
-	console.log(processedText);
-
-	return processedText;
+    return processedWords.join(' ');
 }
 
 export default process;

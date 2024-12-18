@@ -3,7 +3,7 @@ import process from '../src/process';
 import { appLogger } from '../src/config/log4js';
 
 describe('process', () => {
-  it('should tokenize text, remove stop words, punctuation and lemmatize', () => {
+  it('should tokenize text, remove stop words and punctuation, and lemmatize words', () => {
 
 	// TODO: Replace test input with song lyrics
     // Test input with stop words, punctuation and words to lemmatize
