@@ -23,4 +23,22 @@ describe('process', () => {
 
     expect(result).toBe(expected);
   });
+
+  it('should convert numbers to words', () => {
+    const input = '1 2 3 4 5 6 7 8 9 0 1st 2nd 3rd 4th 5th 6th 7th 8th 9th 10th';
+    const result = process(input);
+    expect(result).toBe('one two three four five six seven eight nine zero first second third fourth fifth sixth seventh eighth ninth tenth');
+  });
+
+  it('should normalize abbreviations, slang, and acronyms', () => {
+    const input = 'I\'m gonna go to the store and get some groceries.';
+    const result = process(input);
+    expect(result).toBe('i is going to go store get grocery');
+  });
+
+  it('should fix spelling errors', () => {
+    const input = 'I\'m gokna go to the stere and get some grocaries.';
+    const result = process(input);
+    expect(result).toBe('i is going to go store get grocery');
+  });
 });
