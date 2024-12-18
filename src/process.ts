@@ -1,6 +1,6 @@
 import nlp from 'compromise'
 import { appLogger } from './config/log4js';
-import PipelineOutput from './interfaces/PipelineOutput';
+import { PipelineOutput, ProcessingStep, Tokenize } from './interfaces/PipelineOutput';
 
 /**
  * Process the text by tokenizing, removing stop words, cleaning tokens, and lemmatizing
@@ -18,8 +18,9 @@ const process: PipelineOutput = (text: string): string => {
 	
 	const tokens = tokenize(text);
 	const withoutStopWords = removeStopWords(tokens);
-	const cleaned = cleanTokens(withoutStopWords);
-	const processed = lemmatizeTokens(cleaned);
+	const numbersToWords = convertNumbersToWords(withoutStopWords);
+	const withoutPunctuation = removePunctuation(numbersToWords);
+	const processed = lemmatizeTokens(withoutPunctuation);
 	
 	appLogger.info('Processed result:', processed);
 
@@ -31,7 +32,7 @@ const process: PipelineOutput = (text: string): string => {
 /**
  * Tokenize the text into individual words
  */
-function tokenize(text: string): string[] {
+const tokenize: Tokenize = (text: string): string[] => {
 	const doc = nlp(text);
 	return doc.terms().out('array');
 }
@@ -44,10 +45,10 @@ function tokenize(text: string): string[] {
  * 3. Helps focus on the important content words (nouns, verbs, adjectives, adverbs)
  * 4. Improves efficiency of text analysis tasks like topic modeling and text classification
  */
-function removeStopWords(tokens: string[]): string[] {
+const removeStopWords: ProcessingStep = (tokens: string[]): string[] => {
 	const doc = nlp(tokens.join(' '));
 	return doc
-		.match('(#Noun|#Verb|#Adjective|#Adverb)')
+		.match('(#Noun|#Verb|#Adjective|#Adverb|#Value)')
 		.terms()
 		.out('array');
 }
@@ -85,10 +86,22 @@ function removeStopWords(tokens: string[]): string[] {
  * - Backticks (`)
  * - Vertical bars (|)
  */
-function cleanTokens(tokens: string[]): string[] {
+const removePunctuation: ProcessingStep = (tokens: string[]): string[] => {
 	return tokens
 		.map(word => word.replace(/[^\w\s]|_/g, "").toLowerCase())
 		.filter(word => word !== '');
+}
+
+/**
+ * Convert numbers to words
+ * 
+ * Example:
+ * "1 2 3 4 5 6 7 8 9 0 1st 2nd 3rd 4th 5th 6th 7th 8th 9th 10th" -> "one two three four five six seven eight nine zero first second third fourth fifth sixth seventh eighth ninth tenth"
+ */
+const convertNumbersToWords: ProcessingStep = (tokens: string[]): string[] => {
+	const doc = nlp(tokens.join(' '));
+	doc.numbers().toText();
+	return doc.terms().out('array');
 }
 
 /**
@@ -99,7 +112,7 @@ function cleanTokens(tokens: string[]): string[] {
  * TODO: Using nlp twice in order to format the output as an array
  * There's probably a better way to do this.
  */
-function lemmatizeTokens(tokens: string[]): string[] {
+const lemmatizeTokens: ProcessingStep = (tokens: string[]): string[] => {
 	const doc = nlp(tokens.join(' '));
 	return nlp(doc.compute('root').text('root')).out('array');
 }
