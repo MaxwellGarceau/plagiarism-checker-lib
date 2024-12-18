@@ -1,6 +1,6 @@
 import nlp from 'compromise'
 import { appLogger } from './config/log4js';
-
+import PipelineOutput from './interfaces/PipelineOutput';
 /**
  * Process the text by tokenizing, removing stop words, cleaning tokens, and lemmatizing
  * 
@@ -12,7 +12,7 @@ import { appLogger } from './config/log4js';
  * The result is a list of lemmatized words that can be used for further analysis or
  * processing in text mining and natural language processing tasks.
  */
-function process(text: string): string {
+const process: PipelineOutput = (text: string): string => {
 	appLogger.info('Original text:', text);
 	
 	const tokens = tokenize(text);
@@ -21,6 +21,9 @@ function process(text: string): string {
 	const processed = lemmatizeTokens(cleaned);
 	
 	appLogger.info('Processed result:', processed);
+
+	// TODO: Do we want to return the processed tokens as an array?
+	// Join the processed tokens back into a string
 	return processed.join(' ');
 }
 
@@ -50,8 +53,9 @@ function removeStopWords(tokens: string[]): string[] {
 
 /**
  * Remove punctuation and make all words lowercase
+ * Removes any character that is not a word character or whitespace
  * 
- * Punctuation marks removed:
+ * Example punctuation marks removed:
  * - Periods (.)
  * - Commas (,)
  * - Exclamation marks (!)
