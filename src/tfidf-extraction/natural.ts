@@ -1,4 +1,5 @@
 import natural from 'natural';
+import { TFIDFExtractor } from '../interfaces/TFIDFExtractor';
 import { appLogger } from '../config/log4js';
 
 /**
@@ -7,7 +8,7 @@ import { appLogger } from '../config/log4js';
  * It uses Natural's TF-IDF implementation to compute scores for term significance.
  */
 
-class TFIDFProcessor {
+class TFIDFProcessor implements TFIDFExtractor {
 	private tfidf: natural.TfIdf;
 
 	constructor() {
