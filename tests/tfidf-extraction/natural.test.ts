@@ -1,17 +1,17 @@
 import { describe, it, expect } from 'vitest';
-import TFIDFProcessor from '../../src/tfidf-extraction/natural';
+import TFIDFNatural from '../../src/tfidf-extraction/natural';
 
-describe('TFIDFProcessor', () => {
+describe('TFIDFNatural', () => {
 	const documents = [
 		"cat sat on the mat",
 		"cat and dog",
 		"dog barked at the cat",
 		"the mat was under the cat"
 	];
-	let processor: TFIDFProcessor;
+	let processor: TFIDFNatural;
 
 	beforeEach(() => {
-		processor = new TFIDFProcessor();
+		processor = new TFIDFNatural();
 		processor.addDocuments(documents);
 	});
 
@@ -39,13 +39,13 @@ describe('TFIDFProcessor', () => {
 	});
 
 	it('should handle an edge case with an empty document set', () => {
-		const emptyProcessor = new TFIDFProcessor();
+		const emptyProcessor = new TFIDFNatural();
 		const tfidfResult = emptyProcessor.calculateTFIDF('cat');
 		expect(tfidfResult).toEqual([]);
 	});
 
 	it('should handle a single document correctly', () => {
-		const singleDocProcessor = new TFIDFProcessor();
+		const singleDocProcessor = new TFIDFNatural();
 		singleDocProcessor.addDocuments(["cat and dog"]);
 		const tfidfCat = singleDocProcessor.calculateTFIDF('cat');
 		// Expect a single result for the single document
