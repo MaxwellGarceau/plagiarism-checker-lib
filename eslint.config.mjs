@@ -7,7 +7,11 @@ import parser from "@typescript-eslint/parser";
 export default [
 	{
 		files: ["**/*.{js,mjs,cjs,ts}"],
+	},
+	{
 		ignores: ["node_modules/**", "dist/**", "coverage/**"],
+	},
+	{
 		languageOptions: {
 			ecmaVersion: 2020,
 			sourceType: "module",
