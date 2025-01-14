@@ -48,6 +48,7 @@
   },
   "dependencies": {
     "compromise": "^14.14.3",
+    "compute-cosine-similarity": "^1.1.0",
     "log4js": "^6.9.1",
     "natural": "^8.0.1"
   }
