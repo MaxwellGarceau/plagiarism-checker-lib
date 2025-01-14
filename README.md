@@ -1,6 +1,15 @@
 # Plagiarism Checker Library
 A library for checking plagiarism in text documents.
 
+## Setup
+- `nvm use && npm install`
+- `npm run dev`
+
+## Tests
+Vitest is used to write unit tests.
+
+- `npm run test`
+
 ## Developer Notes
 
 ## App Architecture
