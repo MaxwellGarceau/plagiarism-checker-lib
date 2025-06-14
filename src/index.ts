@@ -1,5 +1,5 @@
 import { appLogger } from "./config/log4js";
-import process from "./process";
+import process from "./process/process";
 import TFIDFRegistry from './init/tfidf';
 
 // TODO: Set defaults for args and type args

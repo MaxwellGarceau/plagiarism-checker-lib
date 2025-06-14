@@ -1,6 +1,6 @@
 import nlp from 'compromise'
-import { appLogger } from './config/log4js';
-import { PipelineOutput, ProcessingStep, Tokenize } from './interfaces/PipelineOutput';
+import { appLogger } from '../config/log4js';
+import { PipelineOutput, ProcessingStep, Tokenize } from '../interfaces/PipelineOutput';
 
 /**
  * Process the text by tokenizing, removing stop words, cleaning tokens, and lemmatizing
