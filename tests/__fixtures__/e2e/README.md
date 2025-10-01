@@ -43,8 +43,8 @@ The E2E tests cover:
 ## Expected Results
 
 - **Identical documents**: Always detected as plagiarism
-- **Heavy plagiarism**: Detected with default threshold (0.8)
-- **Moderate plagiarism**: Detected with default threshold (0.8)
+- **Heavy plagiarism**: Detected with default threshold (0.25)
+- **Moderate plagiarism**: Detected with default threshold (0.25)
 - **Light plagiarism**: May or may not be detected depending on threshold
 - **No plagiarism**: Never detected as plagiarism
 - **Edge cases**: Handled gracefully without errors
