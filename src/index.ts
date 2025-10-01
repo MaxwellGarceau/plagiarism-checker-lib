@@ -4,8 +4,7 @@ import TFIDFRegistry from './init/tfidf';
 import CosineSimilarityComputeIO from './similarity/cosine-similarity/compute-io';
 import { VectorBuilder } from './similarity/vector-builder';
 import { isBlank } from './utils/string-utils';
-
-type PlagiarismArgs = { threshold?: number };
+import { PlagiarismArgs } from './interfaces/PipelineOutput';
 
 function areBothDocumentsBlank(referenceDocument: string, queryDocument: string): boolean {
 	return isBlank(referenceDocument) && isBlank(queryDocument);
