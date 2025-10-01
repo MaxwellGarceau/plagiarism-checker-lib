@@ -21,7 +21,7 @@ interface TFIDFExtractor {
 	 * @param topN Number of top terms to retrieve
 	 * @returns An array of terms with their TF-IDF scores
 	 */
-	getTopTermsForDocument(documentIndex: number, topN: number): { term: string; score: number }[];
+	getTopTermsForDocument(documentIndex: number, topN?: number): { term: string; score: number }[];
 }
 
 export { TFIDFExtractor };

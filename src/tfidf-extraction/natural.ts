@@ -50,7 +50,7 @@ class TFIDFNatural implements TFIDFExtractor {
 	 * @param topN Number of top terms to retrieve
 	 * @returns An array of terms with their TF-IDF scores
 	 */
-	getTopTermsForDocument(documentIndex: number, topN: number): { term: string; score: number }[] {
+	getTopTermsForDocument(documentIndex: number, topN: number | undefined = undefined): { term: string; score: number }[] {
 		appLogger.info(`Getting top ${topN} terms for document #${documentIndex}`);
 		const terms = this.tfidf.listTerms(documentIndex);
 		return terms.slice(0, topN).map(term => ({ term: term.term, score: term.tfidf }));

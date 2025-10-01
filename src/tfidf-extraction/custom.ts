@@ -95,7 +95,7 @@ class TFIDFCustom implements TFIDFExtractor {
 	 * @param topN - Number of top terms to retrieve.
 	 * @returns An array of terms with their TF-IDF scores.
 	 */
-	getTopTermsForDocument(documentIndex: number, topN: number): { term: string; score: number }[] {
+	getTopTermsForDocument(documentIndex: number, topN: number | undefined = undefined): { term: string; score: number }[] {
 		const doc = this.corpus[documentIndex];
 		const tf = this.computeTF(doc);
 		const tfidfScores: { term: string; score: number }[] = Object.keys(tf).map(term => ({
