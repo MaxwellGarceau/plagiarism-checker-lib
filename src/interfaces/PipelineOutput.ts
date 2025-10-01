@@ -10,3 +10,7 @@ export interface ProcessingStep {
 export interface Tokenize {
 	(text: string): string[];
 }
+
+export interface PlagiarismArgs {
+	threshold?: number;
+}
