@@ -1,6 +1,42 @@
 # Plagiarism Checker Library
 A library for checking plagiarism in text documents.
 
+## API: `isPlagiarism`
+
+The main function that compares two text documents and returns `true` if the second document is likely plagiarized from the first. Uses TF-IDF vectorization and cosine similarity for robust text comparison.
+
+```ts
+function isPlagiarism(
+  referenceDocument: string,
+  queryDocument: string,
+  args?: { threshold?: number }
+): boolean
+```
+
+**Possible outcomes:**
+- `true` - Documents are similar enough to be considered plagiarism (similarity ≥ threshold)
+- `false` - Documents are sufficiently different (similarity < threshold)
+
+The lower the threshold, the more sensitive the plagiarism check becomes (catches more cases including paraphrasing).
+
+**Example with test data:**
+```ts
+const original = "The quick brown fox jumps over the lazy dog. This is a classic pangram...";
+const heavyPlagiarism = "The quick brown fox **leaps quickly** over the lazy dog. This is a classic pangram... This version has a one word substitution and one new word added.";
+const lightPlagiarism = "A fast brown fox leaps over a sleepy dog. This is a traditional pangram... This version has significant word substitutions and structural changes.";
+
+// Strict threshold (0.8) - only catches heavy plagiarism
+isPlagiarism(original, heavyPlagiarism, { threshold: 0.8 }); // true
+isPlagiarism(original, lightPlagiarism, { threshold: 0.8 }); // false
+
+// Default threshold (0.25) - catches both
+isPlagiarism(original, heavyPlagiarism, { threshold: 0.25 }); // true  
+isPlagiarism(original, lightPlagiarism, { threshold: 0.25 }); // true
+
+// Sensitive threshold (0.1) - catches even light paraphrasing
+isPlagiarism(original, lightPlagiarism, { threshold: 0.1 }); // true
+```
+
 ## Interpreting similarity
 
 Cosine similarity is a number in [0, 1] here (with TF‑IDF, negatives are rare). Higher means more similar.

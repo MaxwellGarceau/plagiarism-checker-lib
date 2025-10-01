@@ -8,13 +8,3 @@ This library follows a functional programming approach rather than an object-ori
 - **Composability**: Small, focused functions can be combined to create more complex operations while keeping the code organized
 
 The architecture emphasizes keeping functions small, pure, and focused on a single responsibility. This allows us to build complex plagiarism detection logic by composing simpler, well-tested functions together.
-
-## API: `isPlagiarism`
-
-```ts
-function isPlagiarism(
-  referenceDocument: string,
-  queryDocument: string,
-  args?: { threshold?: number }
-): boolean
-```
