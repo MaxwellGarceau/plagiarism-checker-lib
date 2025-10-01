@@ -59,7 +59,7 @@ describe("Plagiarism Detector E2E Tests", () => {
 	});
 
 	describe("Threshold Variations", () => {
-		it("should use default threshold of 0.8", () => {
+		it("should use default threshold of 0.25", () => {
 			// Test with a document that should be just above the default threshold
 			const result = isPlagiarism(originalDocument, heavyPlagiarism);
 			expect(result).toBe(true);
