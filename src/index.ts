@@ -3,18 +3,27 @@ import process from "./process/process";
 import TFIDFRegistry from './init/tfidf';
 import CosineSimilarityComputeIO from './similarity/cosine-similarity/compute-io';
 import { VectorBuilder } from './similarity/vector-builder';
+import { isBlank } from './utils/string-utils';
 
 type PlagiarismArgs = { threshold?: number };
 
+function areBothDocumentsBlank(referenceDocument: string, queryDocument: string): boolean {
+	return isBlank(referenceDocument) && isBlank(queryDocument);
+}
+
+function isSameDocument(referenceDocument: string, queryDocument: string): boolean {
+	return !isBlank(referenceDocument) && referenceDocument === queryDocument;
+}
+
 function isPlagiarism(referenceDocument: string, queryDocument: string, args: PlagiarismArgs = {}): boolean {
 	// Short-circuit trivial cases on raw inputs
-	const isBlank = (s: string) => s.trim().length === 0;
-	if (isBlank(referenceDocument) && isBlank(queryDocument)) {
+	if (areBothDocumentsBlank(referenceDocument, queryDocument)) {
 		return false;
 	}
-	if (!isBlank(referenceDocument) && referenceDocument === queryDocument) {
+	if (isSameDocument(referenceDocument, queryDocument)) {
 		return true;
 	}
+
 	// Process
 	const refProcessed = process(referenceDocument);
 	const queryProcessed = process(queryDocument);
