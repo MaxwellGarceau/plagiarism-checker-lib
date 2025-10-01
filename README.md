@@ -1,6 +1,25 @@
 # Plagiarism Checker Library
 A library for checking plagiarism in text documents.
 
+## Interpreting similarity
+
+Cosine similarity is a number in [0, 1] here (with TF‑IDF, negatives are rare). Higher means more similar.
+
+- 0.9–1.0: Near-duplicate content; strong evidence of plagiarism
+- 0.7–0.9: High overlap; likely plagiarism or heavy reuse
+- 0.4–0.7: Moderate overlap; paraphrasing or partial reuse is likely
+- 0.1–0.4: Light overlap; similar topic/terms, weak plagiarism signal
+- 0.0–0.1: Unrelated content
+
+Threshold trade‑off (similarity ≥ threshold → plagiarism):
+- Lower threshold (e.g., 0.1–0.3) = more sensitive, catches paraphrases but increases false positives
+- Higher threshold (e.g., 0.8–0.95) = more strict, flags near‑duplicates but may miss paraphrases
+
+Examples with default threshold 0.25:
+- Identical documents → ~1.0 → flagged
+- Paraphrasing (synonyms/order changes) → ~0.25–0.5 → flagged
+- Different topics → ~0.0–0.1 → not flagged
+
 ## Quick Start
 
 ```ts
@@ -24,29 +43,11 @@ Vitest is used to write unit tests.
 
 - `npm run test`
 
-## Developer Notes
+## Documentation
 
-## App Architecture
-This library follows a functional programming approach rather than an object-oriented one. Since we don't need to maintain state between operations, using pure functions provides several benefits:
+- [Architecture](./docs/architecture.md) - Design principles and architectural decisions
 
-- **Modularity**: Each file exports a single function that performs one specific task, making the code easier to understand, test, and maintain
-- **Predictability**: Pure functions always produce the same output for a given input, eliminating side effects and making debugging simpler
-- **Testability**: Functions that don't maintain state are easier to unit test since we only need to verify input/output relationships
-- **Composability**: Small, focused functions can be combined to create more complex operations while keeping the code organized
-
-The architecture emphasizes keeping functions small, pure, and focused on a single responsibility. This allows us to build complex plagiarism detection logic by composing simpler, well-tested functions together.
-
-### Project Structure
-
-- `src/`: Source code for the library.
-- `tests/`: Test cases for the library.
-- `dist/`: Compiled output of the library.
-- `package.json`: Project metadata and build scripts.
-- `tsconfig.json`: TypeScript configuration.
-- `eslint.config.js`: ESLint configuration.
-- `vitest.config.ts`: Vitest configuration.
-
-## NLP Pipeline
+## NLP Pipeline (process)
 
 - **Processing (`src/process/process.ts`)**: Cleans text input by lowercasing, removing punctuation and stop words, lemmatizing, and normalizing numbers to words.
 - **TF‑IDF Extraction (`src/tfidf-extraction/`)**: Multiple implementations conform to `TFIDFExtractor`:
@@ -69,16 +70,51 @@ The library constructs equal-length vectors by aligning TF‑IDF terms across a 
 
 This wiring lives in `src/index.ts` within the `isPlagiarism` function and returns `true` when similarity ≥ threshold (default 0.25).
 
-### API: `isPlagiarism`
+### Vector Builder
+The vector builder aligns TF‑IDF terms from two documents onto a unified, deterministic vocabulary and produces equal‑length numeric vectors.
+
+- **Location**: `src/similarity/vector-builder.ts`
+- **Input**: `refDocTerms`, `queryDocTerms` (arrays of `{ term: string; score: number }`)
+- **Output**: `{ vocabulary: string[], refVector: number[], queryVector: number[] }`
+- **How it works**:
+  - Creates a union vocabulary from both documents' terms and sorts it for stable ordering
+  - Maps each vocabulary term to its TF‑IDF score in each document; missing terms → 0
+  - Returns equal‑length vectors suitable for cosine similarity
+
+Example:
 
 ```ts
-function isPlagiarism(
-  referenceDocument: string,
-  queryDocument: string,
-  args?: { threshold?: number }
-): boolean
+import { VectorBuilder } from './src/similarity/vector-builder';
+
+const builder = new VectorBuilder();
+const { vocabulary, refVector, queryVector } = builder.buildVectors(refDocTerms, queryDocTerms);
 ```
 
+### Cosine Similarity Calculation
+- **threshold**: Optional similarity cutoff in [0, 1]. Defaults to `0.25`.
+Computes cosine similarity between the two aligned vectors and applies a plagiarism threshold.
+
+- **Location**: `src/similarity/cosine-similarity/compute-io.ts`
+- **API**: `compare(vectorA: number[], vectorB: number[]): number | null`
+- **Implementation details**:
+  - Uses `compute-cosine-similarity` under the hood
+  - Throws if the result is `NaN` (e.g., zero‑magnitude vectors)
+  - Vectors must be the same length (the vector builder guarantees this)
+
+Integration in `src/index.ts` (`isPlagiarism`):
+
+```ts
+const similarity = cosine.compare(refVector, queryVector);
+const { threshold = 0.25 } = args;
+return similarity >= threshold;
+```
+
+- **threshold**: Optional similarity cutoff in [0, 1]. Defaults to `0.25` (lower = more sensitive; higher = more strict).
+
+#### Additional guards in `isPlagiarism`:
+- Blank vs blank documents → returns `false`
+- Identical raw strings → returns `true`
+- No overlapping non‑zero TF‑IDF terms between documents → returns `false`
 - **threshold**: Optional similarity cutoff in [0, 1]. Defaults to `0.25`.
 
 ### Notes
