@@ -15,6 +15,10 @@ function isSameDocument(referenceDocument: string, queryDocument: string): boole
 	return !isBlank(referenceDocument) && referenceDocument === queryDocument;
 }
 
+function hasVectorOverlap(refVector: number[], queryVector: number[]): boolean {
+	return refVector.some((v, i) => v > 0 && queryVector[i] > 0);
+}
+
 function isPlagiarism(referenceDocument: string, queryDocument: string, args: PlagiarismArgs = {}): boolean {
 	// Short-circuit trivial cases on raw inputs
 	if (areBothDocumentsBlank(referenceDocument, queryDocument)) {
@@ -30,7 +34,6 @@ function isPlagiarism(referenceDocument: string, queryDocument: string, args: Pl
 
 	// Extract TF-IDF
 	const tfidf = TFIDFRegistry.get('natural');
-	// TODO: How am I going to add documents here and compare?
 	tfidf.addDocuments([refProcessed, queryProcessed]);
 	const refDocTerms = tfidf.getTopTermsForDocument(0);
 	const queryDocTerms = tfidf.getTopTermsForDocument(1);
@@ -40,8 +43,7 @@ function isPlagiarism(referenceDocument: string, queryDocument: string, args: Pl
 	const { refVector, queryVector } = vectorBuilder.buildVectors(refDocTerms, queryDocTerms);
 
 	// If there is no overlapping non-zero term between documents, treat as not plagiarized
-	const hasOverlap = refVector.some((v, i) => v > 0 && queryVector[i] > 0);
-	if (!hasOverlap) {
+	if (!hasVectorOverlap(refVector, queryVector)) {
 		return false;
 	}
 
