@@ -8,7 +8,7 @@ describe('process', () => {
 	it('should tokenize text, remove stop words and punctuation, and lemmatize words', () => {
 
 		// Test input with stop words, punctuation and words to lemmatize
-		const input = readFileSync(resolve(__dirname, '../__fixtures/processing/raw.txt'), 'utf-8');
+		const input = readFileSync(resolve(__dirname, '../__fixtures__/processing/raw.txt'), 'utf-8');
     
 		// Process the text
 		const result = process(input);
@@ -19,7 +19,7 @@ describe('process', () => {
 		// - No stop words (the, are, over, the)
 		// - No punctuation (!)
 		// - Lemmatized words (foxes -> fox, jumping -> jump)
-		const expected = readFileSync(resolve(__dirname, '../__fixtures/processing/expected.txt'), 'utf-8');
+		const expected = readFileSync(resolve(__dirname, '../__fixtures__/processing/expected.txt'), 'utf-8');
 
 		expect(result).toBe(expected);
 	});
