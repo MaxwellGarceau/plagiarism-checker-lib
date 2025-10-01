@@ -4,10 +4,6 @@ import TFIDFRegistry from './init/tfidf';
 import CosineSimilarityComputeIO from './similarity/cosine-similarity/compute-io';
 import { VectorBuilder } from './similarity/vector-builder';
 
-// TODO: Set defaults for args and type args
-// TODO: Make a registry following the pattern for TFIDF and import here
-// TODO: Add logging comments for each step
-// TODO: Tie all parts together
 type PlagiarismArgs = { threshold?: number };
 
 function isPlagiarism(referenceDocument: string, queryDocument: string, args: PlagiarismArgs = {}): boolean {
