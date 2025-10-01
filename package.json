@@ -15,6 +15,7 @@
     "lint:fix": "eslint . --fix",
     "format": "prettier --write .",
     "test": "vitest",
+    "test:once": "vitest run",
     "test:watch": "vitest --watch",
     "coverage": "vitest run --coverage"
   },
