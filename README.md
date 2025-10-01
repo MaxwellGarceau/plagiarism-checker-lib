@@ -1,5 +1,5 @@
 # Plagiarism Checker Library
-A library for checking plagiarism in text documents.
+A library for checking plagiarism in text documents using TFIDF extraction and cosine similarity.
 
 ## API: `isPlagiarism`
 
