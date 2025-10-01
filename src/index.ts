@@ -2,6 +2,7 @@ import { appLogger } from "./config/log4js";
 import process from "./process/process";
 import TFIDFRegistry from './init/tfidf';
 import CosineSimilarityComputeIO from './similarity/cosine-similarity/compute-io';
+import { VectorBuilder } from './similarity/vector-builder';
 
 // TODO: Set defaults for args and type args
 // TODO: Make a registry following the pattern for TFIDF and import here
@@ -21,19 +22,9 @@ function isPlagiarism(referenceDocument: string, queryDocument: string, args: Pl
 	const refDocTerms = tfidf.getTopTermsForDocument(0);
 	const queryDocTerms = tfidf.getTopTermsForDocument(1);
 
-	// Build aligned vectors across a unified vocabulary
-	const vocabulary = Array.from(new Set([
-		...refDocTerms.map(t => t.term),
-		...queryDocTerms.map(t => t.term)
-	])).sort();
-
-	// Build vectors
-	// Map terms to their TF-IDF scores
-	const termToScoreRef = new Map<string, number>(refDocTerms.map(({ term, score }) => [term, score]));
-	const termToScoreQuery = new Map<string, number>(queryDocTerms.map(({ term, score }) => [term, score]));
-
-	const refVector = vocabulary.map(term => termToScoreRef.get(term) ?? 0);
-	const queryVector = vocabulary.map(term => termToScoreQuery.get(term) ?? 0);
+	// Build aligned vectors for similarity comparison
+	const vectorBuilder = new VectorBuilder();
+	const { refVector, queryVector } = vectorBuilder.buildVectors(refDocTerms, queryDocTerms);
 
 	// Compare similarity
 	const cosineSimilarity = new CosineSimilarityComputeIO();
