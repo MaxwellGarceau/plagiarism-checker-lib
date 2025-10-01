@@ -7,6 +7,14 @@ import { VectorBuilder } from './similarity/vector-builder';
 type PlagiarismArgs = { threshold?: number };
 
 function isPlagiarism(referenceDocument: string, queryDocument: string, args: PlagiarismArgs = {}): boolean {
+	// Short-circuit trivial cases on raw inputs
+	const isBlank = (s: string) => s.trim().length === 0;
+	if (isBlank(referenceDocument) && isBlank(queryDocument)) {
+		return false;
+	}
+	if (!isBlank(referenceDocument) && referenceDocument === queryDocument) {
+		return true;
+	}
 	// Process
 	const refProcessed = process(referenceDocument);
 	const queryProcessed = process(queryDocument);
@@ -22,6 +30,12 @@ function isPlagiarism(referenceDocument: string, queryDocument: string, args: Pl
 	const vectorBuilder = new VectorBuilder();
 	const { refVector, queryVector } = vectorBuilder.buildVectors(refDocTerms, queryDocTerms);
 
+	// If there is no overlapping non-zero term between documents, treat as not plagiarized
+	const hasOverlap = refVector.some((v, i) => v > 0 && queryVector[i] > 0);
+	if (!hasOverlap) {
+		return false;
+	}
+
 	// Compare similarity
 	const cosineSimilarity = new CosineSimilarityComputeIO();
 	const similarity = cosineSimilarity.compare(refVector, queryVector);
@@ -33,9 +47,9 @@ function isPlagiarism(referenceDocument: string, queryDocument: string, args: Pl
 	 * Return isPlagiarism boolean
 	 * 
 	 * Threshold determines when two documents are considered plagiarized.
-	 * Defaults to 0.8 but can be overridden via args: { threshold: number }
+	 * Defaults to 0.25 but can be overridden via args: { threshold: number }
 	 */
-	const { threshold = 0.8 } = args;
+	const { threshold = 0.25 } = args;
 	appLogger.info(`Cosine similarity: ${similarity} (threshold: ${threshold})`);
 	return similarity >= threshold;
 }

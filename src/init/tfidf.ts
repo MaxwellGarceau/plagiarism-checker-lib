@@ -4,16 +4,16 @@ import TFIDFCustom from '../tfidf-extraction/custom';
 import { InitRegistry } from '../interfaces/InitRegistry';
 
 const init: InitRegistry = () => {
-	const defaults = {
-		'natural': new TFIDFNatural(),
-		'custom': new TFIDFCustom(),
-	};
-	
-	const registry = new TFIDFRegistry();
-	
-	// Set default implementations
-	Object.entries(defaults).forEach(([key, value]) => registry.add(key, value));
-	return registry;
+    const defaults = {
+        'natural': () => new TFIDFNatural(),
+        'custom': () => new TFIDFCustom(),
+    };
+    
+    const registry = new TFIDFRegistry();
+    
+    // Set default implementations
+    Object.entries(defaults).forEach(([key, factory]) => registry.add(key, factory));
+    return registry;
 }
 
 export default init();

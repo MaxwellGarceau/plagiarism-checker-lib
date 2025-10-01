@@ -9,8 +9,8 @@ import isPlagiarism from 'plagiarism-checker-lib';
 const reference = 'This is the original document content...';
 const query = 'This is a potentially plagiarized document...';
 
-// Optional: override similarity threshold (default: 0.8)
-const result = isPlagiarism(reference, query, { threshold: 0.85 });
+// Optional: override similarity threshold (default: 0.25)
+const result = isPlagiarism(reference, query, { threshold: 0.3 });
 
 console.log(result); // true if cosine similarity >= threshold
 ```
@@ -67,7 +67,7 @@ The library constructs equal-length vectors by aligning TF‑IDF terms across a 
 5. Create vectors by mapping each vocabulary term to its TF‑IDF score in each document (missing terms → 0).
 6. Compute cosine similarity on these two equal-length vectors.
 
-This wiring lives in `src/index.ts` within the `isPlagiarism` function and returns `true` when similarity ≥ threshold (default 0.8).
+This wiring lives in `src/index.ts` within the `isPlagiarism` function and returns `true` when similarity ≥ threshold (default 0.25).
 
 ### API: `isPlagiarism`
 
@@ -79,7 +79,7 @@ function isPlagiarism(
 ): boolean
 ```
 
-- **threshold**: Optional similarity cutoff in [0, 1]. Defaults to `0.8`.
+- **threshold**: Optional similarity cutoff in [0, 1]. Defaults to `0.25`.
 
 ### Notes
 
